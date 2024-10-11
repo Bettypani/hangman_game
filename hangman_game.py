@@ -2,83 +2,73 @@ import random
 import hangman_words
 import hangman_art
 
-# TODO-1: - Update the word list to use the 'word_list' from hangman_words.py
 def play_game():
-
+    # Load the word list and stages from the imported modules
     word_list = hangman_words.word_list
     stages = hangman_art.stages
-    lives = 6
+    lives = 6  # Number of lives the player has
 
-    # TODO-3: - Import the logo from hangman_art.py and print it at the start of the game.
+    # Print the logo at the start of the game
     print(hangman_art.logo)
 
+    # Randomly select a word from the word list
     chosen_word = random.choice(word_list)
 
-    placeholder = ""
-    word_length = len(chosen_word)
-    for position in range(word_length):
-        placeholder += "_ "
-    print("Word to guess: " + placeholder)
+    # Create a placeholder for the word with underscores
+    display = "_" * len(chosen_word)
+    print("Word to guess: " + " ".join(display))
 
     game_over = False
-    correct_letters = []
-    letters_guessed = []
+    correct_letters = []  # List to track correctly guessed letters
+    letters_guessed = []  # List to track all guessed letters
 
     while not game_over:
-
-        # TODO-6: - Update the code below to tell the user how many lives they have left.
+        # Display the number of lives left
         print(f"****************************{lives}/6 LIVES LEFT****************************")
-        guess = input("Guess a letter: ").lower()
+        guess = input("Guess a letter: ").lower()  # Get user input
+        letters_guessed.append(guess)  # Add guess to the list of guessed letters
+        print(f"The letters you guessed are {letters_guessed}")
 
-        # TODO-4: - If the user has entered a letter they've already guessed, print the letter and let them know.
-        if guess in correct_letters:
-            letters_guessed.append(guess)
+        # Check if the user has already guessed the letter
+        if guess in correct_letters or guess in letters_guessed[:-1]:
             print(f'You already guessed {guess}')
+            continue
 
-        print(f'The letters you guessed are {letters_guessed}')
-
+        # Update the display based on the guess
         display = ""
-
         for letter in chosen_word:
             if letter == guess:
                 display += letter
-                correct_letters.append(guess)
-            elif letter in correct_letters:
-                display += letter
+                correct_letters.append(guess)  # Add to correct letters
             else:
-                display += "_"
+                display += "_" if letter not in correct_letters else letter
 
-        print("Word to guess: " + display)
-        
+        print("Word to guess: " + " ".join(display))
 
-        # TODO-5: - If the letter is not in the chosen_word, print out the letter and let them know it's not in the word.
-        #  e.g. You guessed d, that's not in the word. You lose a life.
-
+        # Check if the guessed letter is in the chosen word
         if guess not in chosen_word:
-            lives -= 1
-            print(f"You guessed {guess} , that's not in the word. You lose a life.")
+            lives -= 1  # Lose a life
+            print(f"You guessed {guess}, that's not in the word. You lose a life.")
 
             if lives == 0:
                 game_over = True
-
-                # TODO 7: - Update the print statement below to give the user the correct word they were trying to guess.
                 print(f"***********************The correct word was {chosen_word}**********************")
                 print(f"***********************YOU LOSE**********************")
                 print('\n' * 5)
 
-
+        # Check for win condition
         if "_" not in display:
             game_over = True
             print("****************************YOU WIN****************************")
 
-        # TODO-2: - Update the code below to use the stages List from the file hangman_art.py
+        # Print the current hangman stage
         print(stages[lives])
 
+# Main game loop
 while True:
     play_game()
-
     play_again = input("Would you like to play again yes or no \n").lower()
 
     if play_again != 'yes':
-        print("Thank for playing")
+        print("Thank you for playing!")
         break
